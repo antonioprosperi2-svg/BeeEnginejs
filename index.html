@@ -1,502 +1,89 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
 <meta charset="UTF-8">
-<!-- BeeEngine CSS 3D Tower — blocco HTML personalizzato WordPress -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BeeEngine JS — Motore di gioco 2D in JavaScript per Canvas</title>
+<meta name="description" content="BeeEngine JS è un motore di gioco 2D in JavaScript per HTML5 Canvas: camera, layer di disegno, particelle, collisioni e culling. Installa con npm.">
+<link rel="canonical" href="https://beeenginejs.com/">
+<meta property="og:title" content="BeeEngine JS — Motore di gioco 2D in JavaScript">
+<meta property="og:description" content="Motore 2D per HTML5 Canvas: camera, layer, particelle, collisioni. Disponibile su npm.">
+<meta property="og:url" content="https://beeenginejs.com/">
+<meta property="og:type" content="website">
 <style>
-  #bee-engine-block,
-  #bee-engine-block * {
-    box-sizing: border-box;
-  }
-
-  #bee-engine-block {
-    width: 100%;
-    max-width: 100%;
-    margin: 0;
-    background: #0a0a10;
-    font-family: system-ui, -apple-system, Segoe UI, sans-serif;
-  }
-
-  #bee-3d-carousel {
-    --bee-radius: 200px;
-    --bee-rise: 18px;
-    --bee-tilt: -20deg;
-    position: relative;
-    width: 100%;
-    height: 480px;
-    margin: 0 auto;
-    overflow: hidden;
-    isolation: isolate;
-    color: #fff;
-    background:
-      radial-gradient(ellipse 48% 40% at 50% 55%, rgba(0, 255, 204, 0.1), transparent 66%),
-      radial-gradient(ellipse 36% 22% at 50% 86%, rgba(255, 190, 66, 0.07), transparent 70%),
-      #0a0a10;
-    cursor: grab;
-    touch-action: pan-y;
-    user-select: none;
-    -webkit-user-select: none;
-  }
-
-  #bee-3d-carousel.is-dragging {
-    cursor: grabbing;
-  }
-
-  #bee-3d-carousel .bee-3d-hint {
-    position: absolute;
-    top: 14px;
-    left: 12px;
-    right: 12px;
-    z-index: 3;
-    margin: 0;
-    text-align: center;
-    color: #00ffcc !important;
-    font-weight: 700;
-    font-size: 0.95rem;
-    letter-spacing: 0.02em;
-    text-shadow: 0 0 12px rgba(0, 255, 204, 0.45);
-    pointer-events: none;
-  }
-
-  #bee-3d-carousel .bee-3d-viewport {
-    position: absolute;
-    inset: 0;
-    perspective: 1600px;
-    perspective-origin: 50% 48%;
-  }
-
-  #bee-3d-carousel .bee-3d-spin {
-    position: absolute;
-    left: 50%;
-    top: 52%;
-    width: 0;
-    height: 0;
-    transform-style: preserve-3d;
-    animation: bee-3d-spin 32s linear infinite;
-    will-change: transform;
-  }
-
-  #bee-3d-carousel .bee-3d-drag {
-    --rotation: 0deg;
-    position: absolute;
-    width: 0;
-    height: 0;
-    transform: rotateY(var(--rotation));
-    transform-style: preserve-3d;
-    will-change: transform;
-  }
-
-  #bee-3d-carousel .bee-3d-floor {
-    position: absolute;
-    left: -210px;
-    top: 118px;
-    width: 420px;
-    height: 56px;
-    background: radial-gradient(ellipse at 50% 50%, rgba(0, 255, 204, 0.16), transparent 68%);
-    transform: rotateX(90deg);
-    pointer-events: none;
-  }
-
-  #bee-3d-carousel .bee-3d-ring {
-    position: absolute;
-    left: -200px;
-    top: -200px;
-    width: 400px;
-    height: 400px;
-    border: 1px solid rgba(0, 255, 204, 0.16);
-    border-radius: 50%;
-    pointer-events: none;
-  }
-
-  #bee-3d-carousel .bee-3d-ring.is-top {
-    transform: rotateX(90deg) translateZ(86px);
-  }
-
-  #bee-3d-carousel .bee-3d-ring.is-bot {
-    transform: rotateX(90deg) translateZ(-86px);
-    border-color: rgba(255, 190, 66, 0.14);
-  }
-
-  #bee-3d-carousel .bee-3d-pole {
-    position: absolute;
-    left: -8px;
-    top: -150px;
-    width: 16px;
-    height: 300px;
-    transform-style: preserve-3d;
-    pointer-events: none;
-  }
-
-  #bee-3d-carousel .bee-3d-pole span {
-    position: absolute;
-    inset: 0;
-    border-radius: 8px;
-    background: linear-gradient(90deg, #3a4552 0%, #d5dee8 46%, #8b98a6 52%, #2f3844 100%);
-  }
-
-  #bee-3d-carousel .bee-3d-pole span:nth-child(2) {
-    transform: rotateY(90deg);
-    background: linear-gradient(90deg, #262e38 0%, #9aa8b8 46%, #5b6876 52%, #1c232c 100%);
-  }
-
-  #bee-3d-carousel .bee-3d-card {
-    --i: 0;
-    --c: #ff4757;
-    position: absolute;
-    left: -80px;
-    top: -38px;
-    width: 160px !important;
-    height: 76px !important;
-    max-width: none !important;
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    transform:
-      rotateY(calc(var(--i) * 40deg)) translateZ(var(--bee-radius)) translateY(calc((var(--i) - 4) * var(--bee-rise)));
-    transform-style: preserve-3d;
-    color: #fff !important;
-    text-decoration: none !important;
-    font-weight: 800;
-    font-size: 1.12rem;
-    letter-spacing: 0.01em;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
-    will-change: transform;
-    -webkit-user-drag: none;
-  }
-
-  #bee-3d-carousel .bee-3d-card span {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    padding: 0 8px;
-    border-radius: 8px;
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0) 42%),
-      var(--c);
-    border: 2px solid rgba(255, 255, 255, 0.92);
-    box-shadow:
-      0 8px 18px rgba(0, 0, 0, 0.4),
-      0 0 14px color-mix(in srgb, var(--c) 40%, transparent);
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-  }
-
-  #bee-3d-carousel .bee-3d-card::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 8px;
-    background: #16161f;
-    border: 2px solid rgba(255, 255, 255, 0.12);
-    transform: rotateY(180deg) translateZ(1px);
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-  }
-
-  #bee-3d-carousel .bee-3d-card:hover span,
-  #bee-3d-carousel .bee-3d-card:focus-visible span {
-    filter: brightness(1.12);
-  }
-
-  #bee-3d-carousel .bee-3d-card:focus-visible {
-    outline: none;
-  }
-
-  #bee-3d-carousel .bee-3d-card:focus-visible span {
-    outline: 3px solid #00ffcc;
-    outline-offset: 3px;
-  }
-
-  @keyframes bee-3d-spin {
-    from {
-      transform: rotateX(var(--bee-tilt)) rotateY(-38deg);
-    }
-
-    to {
-      transform: rotateX(var(--bee-tilt)) rotateY(322deg);
-    }
-  }
-
-  @media (max-width: 720px) {
-    #bee-3d-carousel {
-      --bee-radius: 132px;
-      --bee-rise: 14px;
-      height: 380px;
-    }
-
-    #bee-3d-carousel .bee-3d-hint {
-      font-size: 0.8rem;
-    }
-
-    #bee-3d-carousel .bee-3d-card {
-      left: -64px;
-      top: -31px;
-      width: 128px !important;
-      height: 62px !important;
-      font-size: 0.92rem;
-    }
-
-    #bee-3d-carousel .bee-3d-pole {
-      left: -6px;
-      top: -115px;
-      width: 12px;
-      height: 230px;
-    }
-
-    #bee-3d-carousel .bee-3d-ring {
-      left: -132px;
-      top: -132px;
-      width: 264px;
-      height: 264px;
-    }
-
-    #bee-3d-carousel .bee-3d-ring.is-top {
-      transform: rotateX(90deg) translateZ(62px);
-    }
-
-    #bee-3d-carousel .bee-3d-ring.is-bot {
-      transform: rotateX(90deg) translateZ(-62px);
-    }
-
-    #bee-3d-carousel .bee-3d-floor {
-      left: -140px;
-      top: 88px;
-      width: 280px;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    #bee-3d-carousel .bee-3d-spin {
-      animation: none;
-      transform: rotateX(var(--bee-tilt)) rotateY(-38deg);
-    }
-  }
-
-  #bee-seo-hub {
-    width: 100%;
-    background: #0d0d15;
-    color: #fff !important;
-    padding: 48px 20px 56px;
-  }
-
-  #bee-seo-hub .bee-seo-inner {
-    max-width: 900px;
-    margin: 0 auto;
-  }
-
-  #bee-seo-hub h1 {
-    color: #00ffcc !important;
-    font-size: clamp(1.7rem, 4vw, 2.5rem) !important;
-    margin: 0 0 20px !important;
-    text-shadow: 0 0 15px rgba(0, 255, 204, 0.2);
-    line-height: 1.25 !important;
-  }
-
-  #bee-seo-hub h2 {
-    color: #ffbe42 !important;
-    font-size: 1.8rem !important;
-    border-bottom: 2px solid #222233;
-    padding-bottom: 10px;
-    margin: 40px 0 0 !important;
-  }
-
-  #bee-seo-hub h3 {
-    color: #00ffcc !important;
-    font-size: 1.4rem !important;
-    margin: 40px 0 0 !important;
-  }
-
-  #bee-seo-hub p {
-    line-height: 1.8;
-    color: #e2e2ec !important;
-    font-size: 1.1rem;
-    margin: 20px 0;
-  }
-
-  #bee-seo-hub ul {
-    list-style: none;
-    padding: 0;
-    margin: 20px 0 0;
-    line-height: 2;
-    font-size: 1.05rem;
-  }
-
-  #bee-seo-hub li {
-    margin: 0 0 12px;
-    padding-left: 15px;
-  }
-
-  #bee-seo-hub a {
-    text-decoration: underline;
-    font-weight: 700;
-  }
-
-  #bee-seo-hub .bee-seo-note {
-    margin-top: 40px;
-    padding: 20px;
-    background: #11111e;
-    border: 1px solid #222233;
-    border-radius: 6px;
-  }
-
-  #bee-seo-hub .bee-seo-note p {
-    margin: 0;
-    font-size: 0.95rem;
-    color: #a0a0ba !important;
-    line-height: 1.6;
-  }
-
-  #bee-seo-hub code {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  }
+:root{--bg:#0f1115;--card:#181b22;--line:#2a2f3a;--txt:#e8eaf0;--mut:#9aa3b2;--acc:#f5b301;--acc2:#ffd34d}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--txt);line-height:1.6}
+a{color:var(--acc2);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+header{border-bottom:1px solid var(--line)}
+nav{display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{font-weight:800;font-size:1.2rem;color:var(--txt)}.logo span{color:var(--acc)}
+nav .links a{margin-left:20px;color:var(--mut);font-size:.95rem}
+.hero{padding:80px 0 60px;text-align:center}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);line-height:1.15;margin-bottom:18px}
+.hero h1 span{color:var(--acc)}
+.hero p{color:var(--mut);font-size:1.15rem;max-width:640px;margin:0 auto 32px}
+.btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn{display:inline-block;padding:12px 24px;border-radius:10px;font-weight:600}
+.btn.p{background:var(--acc);color:#111}.btn.p:hover{background:var(--acc2);text-decoration:none}
+.btn.s{border:1px solid var(--line);color:var(--txt)}.btn.s:hover{border-color:var(--acc);text-decoration:none}
+pre{background:#0a0c10;border:1px solid var(--line);border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:.92rem;text-align:left}
+code{font-family:ui-monospace,Consolas,monospace;color:#ffe08a}
+.install{max-width:420px;margin:36px auto 0}
+section{padding:50px 0}
+h2{font-size:1.7rem;margin-bottom:24px;text-align:center}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px}
+.card h3{font-size:1.05rem;margin-bottom:6px}.card p{color:var(--mut);font-size:.95rem}
+.ico{font-size:1.6rem;margin-bottom:8px}
+footer{border-top:1px solid var(--line);padding:30px 0;color:var(--mut);font-size:.9rem;text-align:center}
+@media(max-width:560px){nav .links a:not(:last-child){display:none}}
 </style>
-
-<div id="bee-engine-block">
-  <div id="bee-3d-carousel" role="region" aria-label="Torre moduli BeeEngine, trascina per ruotare">
-    <p class="bee-3d-hint">🐝 Trascina per ruotare · clicca una scheda</p>
-    <div class="bee-3d-viewport">
-      <div class="bee-3d-spin">
-        <div class="bee-3d-drag">
-          <div class="bee-3d-floor" aria-hidden="true"></div>
-          <div class="bee-3d-ring is-top" aria-hidden="true"></div>
-          <div class="bee-3d-ring is-bot" aria-hidden="true"></div>
-          <div class="bee-3d-pole" aria-hidden="true"><span></span><span></span></div>
-          <a class="bee-3d-card" style="--i:0;--c:#ff4757" href="https://beeenginejs.com/documentazione-beeengine/" draggable="false"><span>⚙️ Core</span></a>
-          <a class="bee-3d-card" style="--i:1;--c:#00cec9" href="https://github.com/antonioprosperi2-svg/BeeEngine-V2.5.0/tree/main/src/debug" draggable="false"><span>🐞 Debug</span></a>
-          <a class="bee-3d-card" style="--i:2;--c:#2ed573" href="https://github.com/antonioprosperi2-svg/BeeEngine-V2.5.0/tree/main/src/gameplay" draggable="false"><span>🎮 Gameplay</span></a>
-          <a class="bee-3d-card" style="--i:3;--c:#9b59b6" href="https://github.com/antonioprosperi2-svg/BeeEngine-V2.5.0/tree/main/src/graphics" draggable="false"><span>🎨 Graphics</span></a>
-          <a class="bee-3d-card" style="--i:4;--c:#e84393" href="https://github.com/antonioprosperi2-svg/BeeEngine-V2.5.0/tree/main/src/input" draggable="false"><span>⌨️ Input</span></a>
-          <a class="bee-3d-card" style="--i:5;--c:#ffa502" href="https://github.com/antonioprosperi2-svg/BeeEngine-V2.5.0/tree/main/src/physics" draggable="false"><span>⚡ Physics</span></a>
-          <a class="bee-3d-card" style="--i:6;--c:#2ea44f" href="https://github.com/antonioprosperi2-svg/BeeEngine-V2.5.0" draggable="false"><span>🐙 GitHub</span></a>
-          <a class="bee-3d-card" style="--i:7;--c:#cb3837" href="https://www.npmjs.com/package/beeengine" draggable="false"><span>📦 NPM</span></a>
-          <a class="bee-3d-card" style="--i:8;--c:#70a1ff" href="https://dev.to/antonioprosperi2svg" draggable="false"><span>📝 DEV.to</span></a>
-        </div>
-      </div>
-    </div>
+</head>
+<body>
+<header><div class="wrap"><nav>
+  <a class="logo" href="./">🐝 Bee<span>Engine</span> JS</a>
+  <div class="links">
+    <a href="https://beeenginejs.com/">Documentazione</a>
+    <a href="https://www.npmjs.com/package/beeengine">npm</a>
+    <a href="https://github.com/antonioprosperi2-svg/BeeEngine-V2.5.0">GitHub</a>
   </div>
+</nav></div></header>
 
-  <section id="bee-seo-hub">
-    <div class="bee-seo-inner">
-      <h1>BeeEngine JS: Il Motore Grafico 2D Leggero per Giochi Web</h1>
-      <p>
-        Benvenuto nell'hub ufficiale di <strong>BeeEngine JS</strong>, il framework definitivo per lo sviluppo di
-        videogiochi nel browser. Se stai cercando un <strong>motore grafico JavaScript 2D open source</strong> che
-        unisca prestazioni elevate a una straordinaria leggerezza, questa è la risorsa che fa per te. Distribuito
-        comodamente tramite pacchetto NPM, il progetto offre un'architettura snella ideale sia per prototipi rapidi che
-        per giochi arcade completi.
-      </p>
-      <p>
-        A differenza di altre librerie mastodontiche che appesantiscono il caricamento delle pagine web, questo
-        ecosistema ottimizza ogni singolo ciclo di esecuzione. Grazie a <strong>BeeEngine JS</strong>, l'interazione con
-        il Canvas HTML5 diventa immediata, lasciando allo sviluppatore solo il divertimento di scrivere le logiche di
-        gameplay senza preoccuparsi della gestione low-level della pipeline grafica.
-      </p>
-      <h2>Perché scegliere BeeEngine JS come motore grafico JavaScript 2D?</h2>
-      <p>
-        La filosofia alla base di <strong>BeeEngine JS</strong> si fonda sulla modularità rigorosa. Ogni componente
-        strutturale è isolato all'interno del codice sorgente, consentendo l'inclusione esclusiva delle feature
-        necessarie al tuo videogioco. Puoi esplorare l'albero dei moduli attraverso la torre tridimensionale interattiva
-        posizionata all'inizio della pagina o cliccare direttamente sui collegamenti testuali che seguono:
-      </p>
-      <ul>
-        <li style="border-left: 3px solid #ff4757;">
-          <a href="https://beeenginejs.com/documentazione-beeengine/" style="color: #ff6b81;">Core Module</a>
-          <span style="color: #d0d0e6;"> — Il nucleo che gestisce il game loop fondamentale, il calcolo del delta time e
-            il ciclo vitale dell'applicazione.</span>
-        </li>
-        <li style="border-left: 3px solid #00cec9;">
-          <a href="https://github.com/antonioprosperi2-svg/BeeEngine-V2.5.0/tree/main/src/debug" style="color: #00f2fe;">Debug Tools</a>
-          <span style="color: #d0d0e6;"> — Strumenti avanzati di diagnostica grafica attivabili via software (come la
-            classe <em>BeeLadybug</em>).</span>
-        </li>
-        <li style="border-left: 3px solid #2ed573;">
-          <a href="https://github.com/antonioprosperi2-svg/BeeEngine-V2.5.0/tree/main/src/gameplay" style="color: #2ed573;">Gameplay Components</a>
-          <span style="color: #d0d0e6;"> — Logiche preconfigurate e blueprint strutturali per definire i comportamenti
-            dei personaggi e le entità nello spazio.</span>
-        </li>
-        <li style="border-left: 3px solid #9b59b6;">
-          <a href="https://github.com/antonioprosperi2-svg/BeeEngine-V2.5.0/tree/main/src/graphics" style="color: #c77dff;">Graphics &amp; CanvasRender</a>
-          <span style="color: #d0d0e6;"> — Rendering bidimensionale accelerato, gestione semplificata degli sprite, dei
-            fogli sprite e matrici di trasformazione.</span>
-        </li>
-        <li style="border-left: 3px solid #e84393;">
-          <a href="https://github.com/antonioprosperi2-svg/BeeEngine-V2.5.0/tree/main/src/input" style="color: #ff75c3;">InputManager API</a>
-          <span style="color: #d0d0e6;"> — Mappatura immediata degli input utente con supporto nativo a tastiere
-            hardware, mouse e controller esterni.</span>
-        </li>
-        <li style="border-left: 3px solid #ffa502;">
-          <a href="https://github.com/antonioprosperi2-svg/BeeEngine-V2.5.0/tree/main/src/physics" style="color: #ffbe42;">Physics2D &amp; RigidBody</a>
-          <span style="color: #d0d0e6;"> — Calcolo vettoriale delle collisioni, gravità fissa, forze d'inerzia e corpi
-            rigidi dinamici ottimizzati.</span>
-        </li>
-      </ul>
-      <h3>Sviluppo Open Source e Integrazione Continua con BeeEngine JS</h3>
-      <p>
-        La suite di sviluppo di <strong>BeeEngine JS</strong> evolve costantemente grazie al supporto della community.
-        Se desideri contribuire alla crescita di questo progetto open source, analizzare nel dettaglio le architetture
-        interne o implementare nuove estensioni per la simulazione fisica 2D, ti invitiamo a visitare i nostri canali
-        ufficiali su <a href="https://github.com/antonioprosperi2-svg/BeeEngine-V2.5.0" style="color: #2ea44f;">GitHub</a>
-        e <a href="https://www.npmjs.com/package/beeengine" style="color: #cb3837;">NPM</a>
-        distribuiti nei nodi della demo 3D.
-      </p>
-      <div class="bee-seo-note">
-        <p>
-          💡 <strong>Nota Tecnica per gli Sviluppatori:</strong> Per i moduli le cui guide non sono ancora state
-          completate su WordPress, i link della torre 3D ti reindirizzeranno temporaneamente alle rispettive cartelle
-          dei sorgenti su GitHub. In questo modo potrai visionare direttamente i file di sviluppo (es. la cartella
-          <code>src/debug/</code>) mentre lavoriamo alla stesura dei tutorial tecnici dedicati.
-        </p>
-      </div>
-    </div>
-  </section>
-</div>
+<main>
+<div class="hero"><div class="wrap">
+  <h1>Motore di gioco <span>2D</span> in JavaScript</h1>
+  <p>BeeEngine JS è un motore leggero per giochi HTML5 su Canvas: camera, layer di disegno, particelle, collisioni e culling, senza dipendenze.</p>
+  <div class="btns">
+    <a class="btn p" href="https://beeenginejs.com/">Leggi la documentazione</a>
+    <a class="btn s" href="https://github.com/antonioprosperi2-svg/BeeEngine-V2.5.0">Codice su GitHub</a>
+  </div>
+  <div class="install"><pre><code>npm install beeengine</code></pre></div>
+</div></div>
 
-<script>
-  (function () {
-    const root = document.getElementById('bee-3d-carousel');
-    if (!root) return;
-    const spin = root.querySelector('.bee-3d-spin');
-    const drag = root.querySelector('.bee-3d-drag');
-    let active = false, x0 = 0, r0 = 0, moved = false;
+<section><div class="wrap">
+  <h2>Cosa trovi nel motore</h2>
+  <div class="grid">
+    <div class="card"><div class="ico">🎥</div><h3>Camera 2D</h3><p>Follow del giocatore, scroll, limiti del mondo e conversione screenToWorld / worldToScreen.</p></div>
+    <div class="card"><div class="ico">🗂️</div><h3>Layer di disegno</h3><p>Ordine di rendering per layer, y-sort per i giochi top-down e UI sempre sopra la scena.</p></div>
+    <div class="card"><div class="ico">✨</div><h3>Particelle</h3><p>Burst di particelle con pool di oggetti senza allocazioni e culling sull'area visibile.</p></div>
+    <div class="card"><div class="ico">💥</div><h3>Collisioni e culling</h3><p>Disegna e controlla solo ciò che serve, per restare fluido anche su mobile.</p></div>
+  </div>
+</div></section>
 
-    const readRot = () => parseFloat(getComputedStyle(drag).getPropertyValue('--rotation')) || 0;
+<section><div class="wrap">
+  <h2>Inizia in pochi secondi</h2>
+  <pre><code>import * as Bee from 'beeengine';
 
-    root.addEventListener('pointerdown', (e) => {
-      if (e.button !== undefined && e.button !== 0) return;
-      active = true;
-      moved = false;
-      x0 = e.clientX;
-      r0 = readRot();
-      spin.style.animationPlayState = 'paused';
-      root.classList.add('is-dragging');
-    });
+// Crea il gioco e aggiungi le tue entità.
+// Esempi completi e API nella documentazione:
+// https://beeenginejs.com/</code></pre>
+</div></section>
+</main>
 
-    window.addEventListener('pointermove', (e) => {
-      if (!active) return;
-      const dx = e.clientX - x0;
-      if (Math.abs(dx) > 6) moved = true;
-      drag.style.setProperty('--rotation', (r0 + dx * 0.4) + 'deg');
-    });
-
-    const endDrag = () => {
-      if (!active) return;
-      active = false;
-      root.classList.remove('is-dragging');
-      spin.style.animationPlayState = '';
-    };
-
-    window.addEventListener('pointerup', endDrag);
-    window.addEventListener('pointercancel', endDrag);
-
-    // Intercetta i click sulle schede
-    root.querySelectorAll('.bee-3d-card').forEach(card => {
-      card.addEventListener('click', (e) => {
-        if (moved) {
-          e.preventDefault();
-          e.stopPropagation();
-        }
-      });
-    });
-  })();
-</script>
+<footer><div class="wrap">
+  BeeEngine JS · <a href="https://beeenginejs.com/">beeenginejs.com</a> · <a href="https://www.npmjs.com/package/beeengine">npm</a> · <a href="https://github.com/antonioprosperi2-svg/BeeEngine-V2.5.0">GitHub</a>
+</div></footer>
+</body>
+</html>
