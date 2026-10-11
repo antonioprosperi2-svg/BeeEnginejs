@@ -42,48 +42,127 @@ footer{border-top:1px solid var(--line);padding:30px 0;color:var(--mut);font-siz
 </style>
 </head>
 <body>
-<header><div class="wrap"><nav>
-  <a class="logo" href="./">🐝 Bee<span>Engine</span> JS</a>
-  <div class="links">
-    <a href="https://beeenginejs.com/">Documentazione</a>
-    <a href="https://www.npmjs.com/package/beeengine">npm</a>
-    <a href="https://github.com/antonioprosperi2-svg/BeeEngine-V2.5.0">GitHub</a>
-  </div>
-</nav></div></header>
+    <header>
+        <div class="wrap">
+            <nav>
+                <a class="logo" href="./">🐝 Bee<span>Engine</span> JS</a>
+                <div class="links">
+                    <a href="#classi">Documentazione</a>
+                    <a href="https://www.npmjs.com/package/beeengine">npm</a>
+                    <a href="https://github.com/antonioprosperi2-svg/BeeEngine-V2.5.0">GitHub</a>
+                </div>
+            </nav>
+        </div>
+    </header>
 
-<main>
-<div class="hero"><div class="wrap">
-  <h1>Motore di gioco <span>2D</span> in JavaScript</h1>
-  <p>BeeEngine JS è un motore leggero per giochi HTML5 su Canvas: camera, layer di disegno, particelle, collisioni e culling, senza dipendenze.</p>
-  <div class="btns">
-    <a class="btn p" href="https://beeenginejs.com/">Leggi la documentazione</a>
-    <a class="btn s" href="https://github.com/antonioprosperi2-svg/BeeEngine-V2.5.0">Codice su GitHub</a>
-  </div>
-  <div class="install"><pre><code>npm install beeengine</code></pre></div>
-</div></div>
+    <main>
+        <div class="hero">
+            <div class="wrap">
+                <h1>Motore di gioco <span>2D</span> in JavaScript</h1>
+                <p>BeeEngine JS è un motore leggero per giochi HTML5 su Canvas: camera, layer di disegno, particelle,
+                    collisioni e culling, senza dipendenze.</p>
+                <div class="btns">
+                    <a class="btn p" href="#classi">Leggi la documentazione</a>
+                    <a class="btn s" href="https://github.com/antonioprosperi2-svg/BeeEngine-V2.5.0">Codice su
+                        GitHub</a>
+                </div>
+                <div class="install">
+                    <pre><code>npm install beeengine</code></pre>
+                </div>
+            </div>
+        </div>
 
-<section><div class="wrap">
-  <h2>Cosa trovi nel motore</h2>
-  <div class="grid">
-    <div class="card"><div class="ico">🎥</div><h3>Camera 2D</h3><p>Follow del giocatore, scroll, limiti del mondo e conversione screenToWorld / worldToScreen.</p></div>
-    <div class="card"><div class="ico">🗂️</div><h3>Layer di disegno</h3><p>Ordine di rendering per layer, y-sort per i giochi top-down e UI sempre sopra la scena.</p></div>
-    <div class="card"><div class="ico">✨</div><h3>Particelle</h3><p>Burst di particelle con pool di oggetti senza allocazioni e culling sull'area visibile.</p></div>
-    <div class="card"><div class="ico">💥</div><h3>Collisioni e culling</h3><p>Disegna e controlla solo ciò che serve, per restare fluido anche su mobile.</p></div>
-  </div>
-</div></section>
+        <section id="classi">
+            <div class="wrap">
+                <h2>Cosa trovi nel motore</h2>
+                <input class="cerca" id="cerca" type="search" placeholder="Cerca una classe (es. Camera, Particelle...)"
+                    aria-label="Cerca una classe">
 
-<section><div class="wrap">
-  <h2>Inizia in pochi secondi</h2>
-  <pre><code>import * as Bee from 'beeengine';
+                <!-- ============ CATEGORIA: CORE ============ -->
+                <div class="categoria">
+                    <h3 class="cat">Core</h3>
+                    <div class="grid">
+                        <!-- COPIA QUESTA RIGA PER AGGIUNGERE UNA CARD -->
+                        <a class="card" href="docs/camera.html">
+                            <div class="ico">🎥</div>
+                            <h3>Camera 2D</h3>
+                            <p>Follow del giocatore, scroll, limiti del mondo e conversione screenToWorld /
+                                worldToScreen.</p>
+                        </a>
+                        <a class="card" href="docs/layer.html">
+                            <div class="ico">🗂️</div>
+                            <h3>Layer di disegno</h3>
+                            <p>Ordine di rendering per layer, y-sort per i giochi top-down e UI sempre sopra la scena.
+                            </p>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- ============ CATEGORIA: GRAFICA ============ -->
+                <div class="categoria">
+                    <h3 class="cat">Grafica</h3>
+                    <div class="grid">
+                        <a class="card" href="docs/particelle.html">
+                            <div class="ico">✨</div>
+                            <h3>Particelle</h3>
+                            <p>Burst di particelle con pool di oggetti senza allocazioni e culling sull'area visibile.
+                            </p>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- ============ CATEGORIA: FISICA ============ -->
+                <div class="categoria">
+                    <h3 class="cat">Fisica</h3>
+                    <div class="grid">
+                        <a class="card" href="docs/collisioni.html">
+                            <div class="ico">💥</div>
+                            <h3>Collisioni e culling</h3>
+                            <p>Disegna e controlla solo ciò che serve, per restare fluido anche su mobile.</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="wrap">
+                <h2>Inizia in pochi secondi</h2>
+                <pre><code>import * as Bee from 'beeengine';
 
 // Crea il gioco e aggiungi le tue entità.
 // Esempi completi e API nella documentazione:
 // https://beeenginejs.com/</code></pre>
-</div></section>
-</main>
+            </div>
+        </section>
+    </main>
 
-<footer><div class="wrap">
-  BeeEngine JS · <a href="https://beeenginejs.com/">beeenginejs.com</a> · <a href="https://www.npmjs.com/package/beeengine">npm</a> · <a href="https://github.com/antonioprosperi2-svg/BeeEngine-V2.5.0">GitHub</a>
-</div></footer>
+    <footer>
+        <div class="wrap">
+            BeeEngine JS · <a href="https://beeenginejs.com/">beeenginejs.com</a> · <a
+                href="https://www.npmjs.com/package/beeengine">npm</a> · <a
+                href="https://github.com/antonioprosperi2-svg/BeeEngine-V2.5.0">GitHub</a>
+        </div>
+    </footer>
+
+    <script>
+        // Ricerca: nasconde le card che non corrispondono e le categorie vuote
+        document.getElementById('cerca').addEventListener('input', function () {
+            var q = this.value.trim().toLowerCase();
+            document.querySelectorAll('.categoria').forEach(function (cat) {
+                var visibili = 0;
+                cat.querySelectorAll('.card').forEach(function (c) {
+                    var ok = c.textContent.toLowerCase().indexOf(q) !== -1;
+                    c.classList.toggle('nascosto', !ok);
+                    if (ok) visibili++;
+                });
+                cat.classList.toggle('nascosto', visibili === 0);
+            });
+        });
+    </script>
 </body>
+
 </html>
+
+
+
