@@ -3,11 +3,107 @@
   <img src="https://beeenginejs.com/wp-content/uploads/2026/10/bee-animated.gif" alt="BeeEngine Logo" width="900" />
 </p>
 
-# 🐝 Motore di gioco 2D BeeEngine (v2.10.1 Professional)
+# 🐝 Motore di gioco 2D BeeEngine (v2.11.3 Professional)
 
 BeeEngine è un motore di gioco 2D leggero, modulare e altamente ottimizzato scritto in puro JavaScript moderno (ES Modules) per HTML5 Canvas.
-La **2.10.1** sistema `BeeSprite`, il player semplice del foglio: `frameCount` opzionale (default una riga), `speed` 8 frame al secondo, e `update`/`draw` escono se `dt` o il foglio non sono validi. Demo: `examples/sprite.html`. La **2.10.0** aggiunge il plugin `BeeInventory` (stack, uso, equip, salvataggio degli slot): il motore non lo importa. La **2.9.7** sistema `BeeParticleSystem`: l'AABB segue le particelle vive (niente culling sul 32×32), `update` rispetta `active`/`destroyed`/`dt`, e `destroy` svuota l'array. La **2.9.6** rende `BeeLayer` indipendente dall'ordine delle liste: un figlio con drawLayer proprio non sparisce più se compare prima del padre. La **2.9.5** chiude i bounds di `BeeCamera`: `setBounds` li applica subito, un valore non valido non cancella i limiti già messi, e `Math.round` di x/y non esce dal rettangolo. La **2.9.4** sistema `BeeCamera` da usare (un tick, follow prima del tick, view = canvas). La **2.9.3** allinea `BeeCamera` a `dt` (snap, lerp, bounds, tick nel loop). La **2.9.2** lascia `#pick` decidere durante il lock (coda o interrupt). La **2.9.1** allinea `BeeAnimatedSprite` all'Animator (loop, catch-up, draw). La **2.9.0** apre i plugin: registro cieco + `BeeLocale`. La **2.8.6** sistema `BeePlayer`. La **2.8.5** allinea `BeePlatform.draw`. La **2.8.4** allinea `BeeEnemy.update` a `worldX`. La **2.8.3** rende `BeeMenuScene` un menu configurabile. La **2.8.2** sistema `BeeEnemyShooter`. La **2.8.1** dà a `BeeCollectible` un `collect()` vero. La **2.8.0** chiude il nucleo framework: Animator, Tween/Timeline, AudioMixer, Layer, Prefab, Pathfinder, **BeeUI**. Dalla 2.7: Timer. Dalla 2.6: Pool. Dalla 2.5: Transform, Save, fisica, SceneManager, SpatialHash.
 
+## 🆕 Novità
+
+* **2.11.3** — `BeeTouchControls.setButtonKeys(nome, tasti)` cambia i tasti di un pulsante (rilascia prima quelli attivi) e `draw` senza contesto esce in silenzio.
+* **2.11.2** — `BeeInput.addTouchBlocker`: un tocco su un pulsante di `BeeTouchControls` non è più un clic del mouse, quindi un `BeeButton` o un `BeeMenuScene` sotto il pulsante non scatta. Demo: `examples/touchcontrols.html` (contatore «clic»).
+* **2.11.1** — `BeeTouchControls`: il dito che scivola da un pulsante all'altro rilascia il tasto, due dita sullo stesso pulsante lo tengono finché non le alzi tutte e due, l'azione scrive `Space`, `destroy` toglie davvero i listener. Demo: `examples/touchcontrols.html`.
+
+Storico completo, dalla versione più recente alla più vecchia: [CHANGELOG.md](CHANGELOG.md).
+
+## 📦 Moduli
+
+I moduli con un contratto da spiegare hanno la loro sezione più sotto. Una demo `—` significa che per ora non ce n'è una dedicata.
+
+### Core
+
+| Modulo | A cosa serve | Demo |
+| --- | --- | --- |
+| `BeeEngine` | cuore del motore: loop, coordinamento dei sistemi, registro plugin | `index.html` |
+| `BeeTime` | orologio unico: `dt` di simulazione e `unscaledDt` reale, pausa, `timeScale` | `index.html` |
+| `BeeTimer` | cooldown ed eventi sul clock del motore (`after` / `every`) | — |
+| `BeeEntity` | base delle entità: update, draw, animator/sprite | — |
+| `BeeSceneManager` | cambio scena con replace, non stack | — |
+| `BeeAssetManager` | caricamento centralizzato delle risorse | — |
+| `BeeSave` | persistenza di dati salvati (DTO) | — |
+| `BeeGrid` | griglia di celle (colonne, righe, dimensione cella) | — |
+| `BeePathfinder` | A* e flow field | — |
+| `BeePrefab` | fabbrica di entità da dati | — |
+| `BeeTween` / `BeeTimeline` | interpolazione di proprietà con easing, sequenze | — |
+| `BeePool` | riuso di proiettili e particelle (spawn/release) | — |
+| `BeeTransform` | trasformazioni nel grafo di scena | — |
+| `BeeLadybug` | overlay di debug: hitbox e frame timing (**F2**) | `index.html` |
+
+### Gameplay
+
+| Modulo | A cosa serve | Demo |
+| --- | --- | --- |
+| `BeePlayer` | giocatore in modalità platformer o libera | `examples/player.html` |
+| `BeeEnemy` | nemico con patrol su `worldX` | `examples/platform.html` |
+| `BeeEnemyShooter` | nemico che spara, con rimbalzo clampato | `examples/platform.html` |
+| `BeePlatform` | piattaforma con sprite | `examples/platform.html` |
+| `BeeCollectible` | oggetto da raccogliere con `collect()` | `examples/inventory.html` |
+| `BeeMenuScene` | menu configurabile che avvia la scena scelta | — |
+
+### Graphics
+
+| Modulo | A cosa serve | Demo |
+| --- | --- | --- |
+| `BeeAnimator` | grafo di stati che sceglie quale clip e quando | `examples/anim.html` |
+| `BeeAnimatedSprite` | riproduce un clip del foglio | `examples/anim.html` |
+| `BeeSprite` | player semplice del foglio, a frame al secondo | `examples/sprite.html` |
+| `BeeSpriteSheet` | ritaglia un frame da un foglio di sprite | `examples/sprite.html` |
+| `BeeCamera` | camera con `dt`, follow, bounds, frustum culling | `index.html` |
+| `BeeLayer` | pipeline di disegno a layer | — |
+| `BeeTilemap` | mappa a tile con collisione | `examples/tilemap.html` |
+| `BeeTilemapLoader` | carica mappe Tiled | `examples/tiled.html` |
+| `BeeText` | etichette e HUD (punteggio, vite) | `examples/text.html` |
+| `BeeParticleSystem` | particelle | — |
+
+### Input
+
+| Modulo | A cosa serve | Demo |
+| --- | --- | --- |
+| `BeeInput` | tastiera, mouse e `setKey`; `wasPressed` sul frame di pressione | tutte le demo |
+| `BeeButton` | pulsante a schermo che legge `input.mouse` | `examples/button.html` |
+| `BeeJoystick` | stick analogico su schermo (touch e mouse) | `examples/joystick.html` |
+| `BeeTouchControls` | croce direzionale e pulsante azione su schermo, con `enableTouchControls()` (non `enableJoystick()`, che crea `BeeJoystick`) | `examples/touchcontrols.html` |
+| `BeeVirtualDPad` | croce direzionale a 4 o 8 direzioni | — |
+| `BeeTouchButton` | pulsante tattile rotondo con etichetta | `examples/touchbutton.html` |
+
+### Physics
+
+| Modulo | A cosa serve | Demo |
+| --- | --- | --- |
+| `BeeCollisionSystem` | gruppi logici, collisioni `solid` e `overlap` | `examples/platform.html` |
+| `BeeRigidBody` / `BeePhysicsWorld` | corpo e mondo fisico a passo fisso | — |
+| `BeeSpatialHash` | query su chi è vicino a un AABB | — |
+| `BeeRectCollider` | collider rettangolare | `examples/platform.html` |
+| `BeeBullet` | proiettile 2D con velocità e durata | — |
+
+### UI
+
+| Modulo | A cosa serve | Demo |
+| --- | --- | --- |
+| `BeeUI` | controlli (panel, stack, label, button, nine-slice), anchor e focus | `index.html` |
+
+### Audio
+
+| Modulo | A cosa serve | Demo |
+| --- | --- | --- |
+| `BeeAudioMixer` | bus master/music/sfx/ui/voice, fade, ducking, pan 2D | — |
+
+### Plugin
+
+| Modulo | A cosa serve | Demo |
+| --- | --- | --- |
+| `BeeLocale` | stringhe per lingua con fallback: `t(key)` | `examples/inventory.html` |
+| `BeeInventory` | stack di oggetti, uso, equipaggiamento, salvataggio degli slot | `examples/inventory.html` |
+| `BeeDialogue` | alberi di dialogo con scelte e salvataggio | `examples/dialogue.html` |
 
 
 
@@ -25,7 +121,7 @@ La **2.10.1** sistema `BeeSprite`, il player semplice del foglio: `frameCount` o
 ## 📁 Struttura del Progetto Aggiornata
 
 ```text
-BeeEngine-V2.9/
+BeeEngine-V2.11.0/
 ├── index.html                  # Punto di ingresso HTML e configurazione Canvas
 ├── index.js                    # Barrel ESM (re-export di BeeEngine.js)
 ├── main.js                     # Demo visiva (BeeUI: anchor, stack, focus, HUD)
@@ -45,7 +141,7 @@ BeeEngine-V2.9/
     ├── input/                  # Tastiera, mouse, joystick, touch, button
     ├── ui/                     # BeeUI: Control, panel, stack, label, button, nine-slice
     ├── physics/                # BeeSpatialHash, BeePhysicsWorld, BeeRigidBody, AABB groups
-    ├── plugins/                # contratto + BeeLocale + BeeInventory (il motore non importa questi file)
+    ├── plugins/                # contratto + BeeLocale + BeeInventory + BeeDialogue (il motore non importa questi file)
     └── debug/                  # BeeLadybug: overlay e hitbox
 ```
 
@@ -443,7 +539,7 @@ Il motore **non importa** i plugin. Contratto in `src/plugins/PLUGIN_CONTRACT.md
 
 ```javascript
 import { BeeEngine } from 'beeengine';
-import { BeeLocale, BeeInventory } from 'beeengine/plugins';
+import { BeeLocale, BeeInventory, BeeDialogue } from 'beeengine/plugins';
 
 const gioco = new BeeEngine('testCanvas', 800, 600);
 const locale = new BeeLocale({
@@ -468,9 +564,24 @@ inventory.defineItem('potion', {
 });
 const drop = inventory.add('potion', 8); // { added: 5, left: 3 }
 inventory.use(0, null);
+
+const dialogue = new BeeDialogue({ engine: gioco, locale });
+dialogue.load({
+    start: 'intro',
+    nodes: [
+        { id: 'intro', speaker: 'Guida', textKey: 'hello', choices: [
+            { text: 'La mappa?', next: 'map' },
+            { text: 'Addio', next: null }
+        ] },
+        { id: 'map', speaker: 'Guida', text: 'Il villaggio è a est.' }
+    ]
+});
+// nella scena: scene.update → dialogue.handleInput(input); scene.draw → dialogue.draw(ctx)
 ```
 
-`BeeLocale` è pura lettura. Chi disegna chiama `t(key)`. `BeeInventory` non disegna e non entra nel loop: `add` dice sempre cosa non è entrato (`left`), `equip` / `unequip` o riescono per intero o lasciano lo stato com'era. Le definizioni restano nel codice; `toJSON` salva solo slot ed equipaggiamento. Demo: `examples/inventory.html` (collectible + conteggi via `BeeLocale.t`). Test: `node scripts/test-beeinventory.mjs`. Prossimi (uno alla volta): Light, Dialogue, Quest, Net, Post, Spine.
+`BeeLocale` è pura lettura. Chi disegna chiama `t(key)`. `BeeInventory` non disegna e non entra nel loop: `add` dice sempre cosa non è entrato (`left`), `equip` / `unequip` o riescono per intero o lasciano lo stato com'era. Le definizioni restano nel codice; `toJSON` salva solo slot ed equipaggiamento. Demo: `examples/inventory.html` (collectible + conteggi via `BeeLocale.t`). Test: `node scripts/test-beeinventory.mjs`.
+
+`BeeDialogue` tiene lo stato di un albero di dialogo (speaker, testo, scelte) e non ha né tick né listener propri: la scena chiama `handleInput(input)` in `update` e `draw(ctx)` in `scene.draw` (spazio schermo, dopo la camera). Un nodo senza `choices` si avanza con `advance()`, uno con `choices` con `choose(index)`; il verbo sbagliato è `false` e avvisa. `*Key` si risolve con un locale (opzione, `setLocale` o `engine.plugin('locale')`), senza locale vale il letterale o la chiave grezza, mai vuoto. `onChange` emette `start`, `node`, `choice`, `advance`, `end` (con `reason`: `finished`, `cancel`, `restart`, `reload`, `missing-node`). `start()` da aperto fa un restart pulito. L'albero con id duplicati o malformato lancia al `load`; un `next` che non esiste avvisa al load e a runtime chiude con `missing-node`. `toJSON` salva albero e stato; `fromJSON` riapre sul nodo salvato emettendo solo `node`. Demo: `examples/dialogue.html` (E interagisci, L cambia lingua). Test: `node scripts/test-beedialogue.mjs`. Prossimi (uno alla volta): Light, Quest, Net, Post, Spine.
 
 ## 🎬 BeeSceneManager — replace, non stack
 
@@ -489,7 +600,7 @@ Il manager è l’unico owner del **tick** entity. Il **disegno** delle entity �
 
 `gioco.setScene(name)` chiama `destroy()` su ogni voce di `engine.entities` (body esce dal world; pooled torna in pila), poi svuota l’array e fa `scenes.change`. Senza quel ciclo il body restava nel world — leak silenzioso.
 
-`engine.destroy()` chiama `scenes.destroy()` (exit della corrente, sweep di tutte, Map vuota). Stacca resize e unlock audio. **Non** stacca `BeeInput` (keydown/mouse/touch restano su `window`/`canvas`): va bene se il motore vive per tutta la pagina; non ricreare più istanze sulla stessa pagina senza un teardown input dedicato.
+`engine.destroy()` chiama `scenes.destroy()` (exit della corrente, sweep di tutte, Map vuota). Stacca resize, unlock audio, `BeeInput` e il joystick.
 
 `enableAutoResize` sostituisce l’handler precedente: due chiamate non accumulano listener `resize`.
 
@@ -690,45 +801,10 @@ gioco.enableLadybug();          // visibile; F2 la nasconde
 gioco.start();
 ```
 
-## 🚀 Novità e ottimizzazioni professionali nella v2.2.0
-
 <div align="center">
   <img src="https://beeenginejs.com/wp-content/uploads/2026/10/Registrazione2026-08-22111711-ezgif.com-video-to-gif-converter.gif" alt="BeeJoystick" width="800" />
   <p><i>BeeJoystick Attivazione rapida</i></p>
 </div>
-
-### 1. Controlli Mobile e Joystick Virtuale (`BeeJoystick` & `BeeTouchControls`)
-* **Supporto nativo:** Gestione integrata per tutti gli schermi touch.
-* **Attivazione rapida:** Attiva il joystick analogico e i pulsanti programmabili con un solo comando.
-* **Codice:** `gioco.enableJoystick()`.
-
-### 📱 NUOVO: Componenti Interfaccia Touch Avanzati
-Nella v2.2.0 sono state introdotte due nuove classi specifiche esportate per una gestione granulare dell'input mobile:
-* **`BeeVirtualDPad`**: Una pulsantiera direzionale configurabile a 4 o 8 direzioni (`eightWay: false/true`), ideale per movimenti precisi stile retro-game o platform.
-* **`BeeTouchButton`**: Un pulsante tattile rotondo completamente personalizzabile nel raggio e nel testo dell'etichetta (es. "A" per saltare, "B" per sparare).
-
-### 2. Gestione Sprite e Mappe Avanzata (`BeeSpriteSheet` & `BeeTilemapLoader`)
-* **Ritaglio tessere:** Semplificato il caricamento e il ritaglio da fogli di sprite complessi.
-* **Asincronia:** Gestione fluida e asincrona dei livelli di gioco durante i caricamenti.
-
-### 3. Sistema di Collisioni Centralizzato (`BeeCollisionSystem`)
-* **Gruppi logici:** Registro centralizzato per dividere le entità in gruppi.
-* **Fisica ottimizzata:** Risoluzioni fisiche solide (`solid`) e interazioni ad eventi (`overlap`) ad alta efficienza.
-
-### 4. Risparmio CPU tramite Frustum Culling (`BeeCamera`)
-* **Sfoltimento grafico:** `isRectVisible` usa lo stesso rettangolo arrotondato di `apply`.
-* **Tick:** il motore avanza la camera sul `dt` di simulazione; in pausa resta ferma.
-
-### 5. Distribuzione NPM & Type Definitions (`index.d.ts`)
-* **Modulo ES6:** Distribuzione ufficiale sul registro NPM ottimizzata per i moduli moderni.
-* **Autocompletamento:** Definizioni di tipo aggiornate per l'IntelliSense e i suggerimenti in VS Code.
-
-### 🛠️ Miglioramenti e correzioni
-* Esportate nuove classi touch in `index.js` per una perfetta integrazione con il pacchetto.
-
-* Aggiornata la documentazione e il layout Markdown.
-
-* Testata e verificata la reattività al tocco in tempo reale su dispositivi mobili.
 
 ## 🛠️ Esempio d'Uso Rapido (v2.2.0)
 
