@@ -7,7 +7,7 @@
  /* 1. SFONDO GRIGIO SCURO (NON NERO PESTE) MENTRE CARICA IL VIDEO */
  body {
      margin: 0;
-     background-color: #222; /* Grigio scuro per ridurre lo stacco */
+     background-color: #222; /* Grigio scuro per ridurre lo stacco *
      font-family: sans-serif;
      overflow-x: hidden; /* Evita scorrimenti strani */
  }
